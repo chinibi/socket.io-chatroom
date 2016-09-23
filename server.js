@@ -13,19 +13,7 @@ app.get('/', (req, res, next) => {
   res.sendfile('./public/index.html');
 });
 
-io.on('connection', socket => {
-  console.log('user connected');
-  io.emit('user connected');
-
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-
-  socket.on('chat message', msg => {
-    console.log(msg);
-    io.emit('chat message', msg);
-  });
-});
+require('./socketio')(io);
 
 server.listen(3000, () => {
   console.log('Server listening on port 3000.');
