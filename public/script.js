@@ -1,4 +1,8 @@
-var username = window.prompt('enter your username');
+var username;
+
+while (!username) {
+  username = window.prompt('enter your username');
+}
 
 var socket = io();
 
@@ -6,13 +10,37 @@ socket.emit('user connected', {username: username});
 
 $('form').submit(function(event) {
   event.preventDefault();
-  socket.emit('chat message', {
-    username: username,
-    message: $('#m').val()
-  });
+  var message = $('#m').val();
+
+  if (message.match(/^@/)) {
+    var recipient = message.match(/[^\s@]+/)[0];
+    var messageArr = message.split(' ');
+    messageArr.shift();
+    message = messageArr.join(' ');
+
+    socket.emit('whisper send', {
+      sender: username,
+      recipient: recipient,
+      message: message
+    });
+
+  } else {
+    socket.emit('chat message', {
+      username: username,
+      message: message
+    });
+  }
 
   $('#messages').append($('<li><strong>' + username + ': </strong>' + $('#m').val() + '</li>'));
   $('#m').val('');
+});
+
+socket.on('user list', function(users) {
+  $('#user-list').html('');
+
+  for (var user in users) {
+    $('#user-list').append($('<li>').text(users[user]));
+  }
 });
 
 socket.on('you connected', function() {
@@ -24,7 +52,7 @@ socket.on('user connected', function(data) {
 });
 
 $('#m').on('change keyup paste', function() {
-  if ($(this).val()) {
+  if ( $(this).val() && !$(this).val().match(/^@/) ) {
     socket.emit('user typing', {username: username});
   } else {
     socket.emit('user not typing', {username: username});
@@ -56,4 +84,8 @@ socket.on('user typing list change', function(users) {
 
 socket.on('chat message', function(data) {
   $('#messages').append($('<li><strong>' + data.username + ': </strong>' + data.message + '</li>'));
+});
+
+socket.on('whisper receive', function(data) {
+  $('#messages').append($('<li><strong>Whisper from ' + data.sender + ': ' + '</strong>' + data.message + '</li>'));
 });
