@@ -1,5 +1,4 @@
 #Socket.io Chatroom
--
 
 Experimenting with WebSockets using the [socket.io](http://socket.io/get-started/chat/) library.
 
