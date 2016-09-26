@@ -3,6 +3,8 @@
 
 Experimenting with WebSockets using the [socket.io](http://socket.io/get-started/chat/) library.
 
+[Heroku Demo](http://chinibs-chatroom.herokuapp.com)
+
 To run locally, clone this repo and then in Terminal:
 
 ```
