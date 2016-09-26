@@ -15,6 +15,8 @@ app.get('/', (req, res, next) => {
 
 require('./socketio')(io);
 
-server.listen(3000, () => {
+var port = process.env.PORT || 3000;
+
+server.listen(port, () => {
   console.log('Server listening on port 3000.');
 });
